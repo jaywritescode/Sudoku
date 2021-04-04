@@ -11,14 +11,14 @@ public class Sudoku {
     private Set<Candidate> solution = null;
 
     private final int size;
-    private final int boxesPerRow;
-    private final int boxesPerColumn;
+    private final int boxesPerBand;
+    private final int boxesPerStack;
 
-    private Sudoku(Set<Candidate> givens, int size, int boxesPerRow, int boxesPerColumn) {
+    private Sudoku(Set<Candidate> givens, int size, int boxesPerBand, int boxesPerStack) {
         this.givens = givens;
         this.size = size;
-        this.boxesPerRow = boxesPerRow;
-        this.boxesPerColumn = boxesPerColumn;
+        this.boxesPerBand = boxesPerBand;
+        this.boxesPerStack = boxesPerStack;
     }
 
     private static boolean digitsValid(Set<Candidate> givens, int size) {
@@ -54,18 +54,18 @@ public class Sudoku {
      * Create a new Sudoku puzzle with the given number of boxes per row and per column.
      *
      * @param givens the initial state of the column
-     * @param boxesPerRow the number of boxes per row
-     * @param boxesPerColumn the number of boxes per column
+     * @param boxesPerBand the number of boxes per band
+     * @param boxesPerStack the number of boxes per column
      * @return a Sudoku puzzle
      */
-    public static Sudoku create(Set<Candidate> givens, int boxesPerRow, int boxesPerColumn) {
-        int size = boxesPerRow * boxesPerColumn;
+    public static Sudoku create(Set<Candidate> givens, int boxesPerBand, int boxesPerStack) {
+        int size = boxesPerBand * boxesPerStack;
 
         Preconditions.checkArgument(digitsValid(givens, size),
                 "Too many different 'digits' for a puzzle of size %s.", size);
         Preconditions.checkArgument(rowsAndColumnsValid(givens, size),
                 "Given argument is outside puzzle bounds.");
 
-        return new Sudoku(givens, size, boxesPerRow, boxesPerColumn);
+        return new Sudoku(givens, size, boxesPerBand, boxesPerStack);
     }
 }
