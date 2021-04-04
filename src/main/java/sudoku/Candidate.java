@@ -12,6 +12,18 @@ public class Candidate {
         this.digit = digit;
     }
 
+    public int getRow() {
+        return row;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public char getDigit() {
+        return digit;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
