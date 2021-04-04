@@ -1,27 +1,24 @@
 package sudoku;
 
-import com.google.common.collect.Range;
-
 /**
  * A constraint that represents that any given digit must appear exactly once in any given box.
  */
 public class BoxDigitConstraint extends Constraint {
 
-    public final Range<Integer> rows, columns;
+    public final Box box;
     public final char digit;
 
-    private BoxDigitConstraint(Range<Integer> rows, Range<Integer> columns, char digit) {
-        this.rows = rows;
-        this.columns = columns;
+    private BoxDigitConstraint(Box box, char digit) {
+        this.box = box;
         this.digit = digit;
     }
 
     @Override
     public boolean isSatisfiedBy(Candidate candidate) {
-        return rows.contains(candidate.row) && columns.contains(candidate.column) && candidate.digit == this.digit;
+        return box.containsCell(candidate.getRow(), candidate.getColumn()) && candidate.digit == this.digit;
     }
 
-    public static BoxDigitConstraint from(Range<Integer> rows, Range<Integer> columns, char digit) {
-        return new BoxDigitConstraint(rows, columns, digit);
+    public static BoxDigitConstraint from(Box box, char digit) {
+        return new BoxDigitConstraint(box, digit);
     }
 }
