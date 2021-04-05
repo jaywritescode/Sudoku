@@ -102,7 +102,6 @@ public class Sudoku {
                 Range.closed(topLeftColumn, topLeftColumn * boxesPerStack));
     }
 
-
     private static boolean validateInitialState(Set<Candidate> givens, Set<Character> domain, int size) {
         Range<Integer> range = Range.closed(1, size);
 
@@ -155,5 +154,38 @@ public class Sudoku {
                 "Given argument is outside puzzle bounds.");
 
         return new Sudoku(givens, domain, size, boxesPerBand, boxesPerStack);
+    }
+
+    public static void main(String... args) {
+        Set<Candidate> givens = Set.of(
+                new Candidate(1, 4, '9'),
+                new Candidate(1, 5, '8'),
+                new Candidate(1, 8, '7'),
+                new Candidate(2, 2, '8'),
+                new Candidate(2, 3, '1'),
+                new Candidate(3, 8, '4'),
+                new Candidate(4, 3, '8'),
+                new Candidate(4, 4, '4'),
+                new Candidate(4, 7, '9'),
+                new Candidate(4, 8, '3'),
+                new Candidate(5, 2, '3'),
+                new Candidate(5, 8, '2'),
+                new Candidate(6, 3, '9'),
+                new Candidate(6, 4, '7'),
+                new Candidate(6, 7, '5'),
+                new Candidate(7, 1, '1'),
+                new Candidate(7, 2, '2'),
+                new Candidate(7, 4, '6'),
+                new Candidate(7, 6, '7'),
+                new Candidate(8, 1, '6'),
+                new Candidate(8, 2, '5'),
+                new Candidate(8, 6, '1'),
+                new Candidate(9, 3, '7'),
+                new Candidate(9, 4, '3'),
+                new Candidate(9, 7, '6')
+        );
+        Sudoku puzzle = Sudoku.create(givens, 9);
+
+        puzzle.solve();
     }
 }
