@@ -24,6 +24,10 @@ public class Candidate {
         return digit;
     }
 
+    public RowAndColumn getRowAndColumn() {
+        return RowAndColumn.create(row, column);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

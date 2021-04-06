@@ -1,11 +1,14 @@
 package sudoku;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Range;
 import csp.ExactCoverProblem;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class Sudoku {
@@ -18,6 +21,8 @@ public class Sudoku {
     private final int size;
     private final int boxesPerBand;
     private final int boxesPerStack;
+
+    private Supplier<Map<RowAndColumn, Candidate>> givensMapSupplier;
 
     private Sudoku(Set<Candidate> givens, Set<Character> domain, int size, int boxesPerBand, int boxesPerStack) {
         this.givens = Set.copyOf(givens);
@@ -34,6 +39,35 @@ public class Sudoku {
                 return constraint.isSatisfiedBy(candidate);
             }
         }.solve();
+    }
+
+    public Optional<Candidate> getGiven(int row, int column) {
+        if (givensMapSupplier == null) {
+            givensMapSupplier = Suppliers.memoize(() -> this.givens.stream()
+                    .collect(Collectors.toMap(Candidate::getRowAndColumn, Function.identity())));
+        }
+        var map = givensMapSupplier.get();
+        return Optional.ofNullable(map.get(RowAndColumn.create(row, column)));
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public int getBoxesPerBand() {
+        return boxesPerBand;
+    }
+
+    public int getBoxesPerStack() {
+        return boxesPerStack;
+    }
+
+    public int getRowsPerBox() {
+        return boxesPerStack;
+    }
+
+    public int getColumnsPerBox() {
+        return boxesPerBand;
     }
 
     private Set<Constraint> constraints() {
@@ -55,7 +89,7 @@ public class Sudoku {
         Set<Candidate> candidates = new HashSet<>();
         for (var row = 1; row <= size; ++row) {
             for (var column = 1; column <= size; ++column) {
-                Optional<Candidate> given = findGiven(row, column);
+                Optional<Candidate> given = getGiven(row, column);
 
                 if (given.isPresent()) {
                     candidates.add(given.get());
@@ -66,12 +100,6 @@ public class Sudoku {
             }
         }
         return candidates;
-    }
-
-    private Optional<Candidate> findGiven(int row, int column) {
-        return givens.stream()
-                .filter(candidate -> candidate.row == row && candidate.column == column)
-                .findFirst();
     }
 
     private Collection<Candidate> findCandidatesFor(int row, int column) {
@@ -186,5 +214,7 @@ public class Sudoku {
         Sudoku puzzle = Sudoku.create(givens, 9);
 
         puzzle.solve();
+
+        new SudokuWriter().write(puzzle);
     }
 }
