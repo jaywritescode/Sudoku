@@ -1,14 +1,12 @@
 package sudoku;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Suppliers;
 import com.google.common.collect.Range;
 import csp.ExactCoverProblem;
 
-import java.util.*;
-import java.util.function.Function;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class Sudoku {
@@ -16,13 +14,13 @@ public class Sudoku {
     private final Set<Candidate> givens;
     private final Set<Character> domain;
 
-    private Set<Candidate> solution = null;
+    private final Set<Candidate> solution = null;
 
     private final int size;
     private final int boxesPerBand;
     private final int boxesPerStack;
 
-    private Supplier<Map<RowAndColumn, Candidate>> givensMapSupplier;
+    private final CandidateSupplier candidateSupplier;
 
     private Sudoku(Set<Candidate> givens, Set<Character> domain, int size, int boxesPerBand, int boxesPerStack) {
         this.givens = Set.copyOf(givens);
@@ -30,6 +28,7 @@ public class Sudoku {
         this.size = size;
         this.boxesPerBand = boxesPerBand;
         this.boxesPerStack = boxesPerStack;
+        this.candidateSupplier = new CandidateSupplier(this);
     }
 
     public Set<Candidate> solve() {
@@ -41,13 +40,12 @@ public class Sudoku {
         }.solve();
     }
 
-    public Optional<Candidate> getGiven(int row, int column) {
-        if (givensMapSupplier == null) {
-            givensMapSupplier = Suppliers.memoize(() -> this.givens.stream()
-                    .collect(Collectors.toMap(Candidate::getRowAndColumn, Function.identity())));
-        }
-        var map = givensMapSupplier.get();
-        return Optional.ofNullable(map.get(RowAndColumn.create(row, column)));
+    public Set<Candidate> getGivens() {
+        return givens;
+    }
+
+    public Set<Character> getDomain() {
+        return domain;
     }
 
     public int getSize() {
@@ -70,6 +68,16 @@ public class Sudoku {
         return boxesPerBand;
     }
 
+    private Set<Candidate> candidates() {
+        Set<Candidate> candidates = new HashSet<>();
+        for (var row = 1; row <= size; ++row) {
+            for (var column = 1; column <= size; ++column) {
+                candidates.addAll(candidateSupplier.perform(row, column));
+            }
+        }
+        return candidates;
+    }
+
     private Set<Constraint> constraints() {
         Set<Constraint> constraints = new HashSet<>();
         for (int row = 1; row <= size; ++row) {
@@ -78,56 +86,11 @@ public class Sudoku {
                     constraints.add(RowColumnConstraint.from(row, column));
                     constraints.add(RowDigitConstraint.from(row, digit));
                     constraints.add(ColumnDigitConstraint.from(column, digit));
-                    constraints.add(BoxDigitConstraint.from(mapToBox(row, column), digit));
+                    // constraints.add(BoxDigitConstraint.from(mapToBox(row, column), digit));
                 }
             }
         }
         return constraints;
-    };
-
-    private Set<Candidate> candidates() {
-        Set<Candidate> candidates = new HashSet<>();
-        for (var row = 1; row <= size; ++row) {
-            for (var column = 1; column <= size; ++column) {
-                Optional<Candidate> given = getGiven(row, column);
-
-                if (given.isPresent()) {
-                    candidates.add(given.get());
-                }
-                else {
-                    candidates.addAll(findCandidatesFor(row, column));
-                }
-            }
-        }
-        return candidates;
-    }
-
-    private Collection<Candidate> findCandidatesFor(int row, int column) {
-        return domain.stream()
-                .map(digit -> new Candidate(row, column, digit))
-                .filter(isValidWithGivens)
-                .collect(Collectors.toSet());
-    }
-
-    private Predicate<Candidate> isValidWithGivens = candidate -> List.of(
-            RowDigitConstraint.from(candidate.row, candidate.digit),
-            ColumnDigitConstraint.from(candidate.column, candidate.digit),
-            BoxDigitConstraint.from(mapToBox(candidate.row, candidate.column), candidate.digit))
-            .stream()
-            .noneMatch(this::hasGivenSatisfyingConstraint);
-
-
-    private boolean hasGivenSatisfyingConstraint(Constraint constraint) {
-        return givens.stream().anyMatch(constraint::isSatisfiedBy);
-    }
-
-    private Box mapToBox(int row, int column) {
-        int topLeftRow = (int) (row / boxesPerStack) + 1;
-        int topLeftColumn = (int) (column / boxesPerBand) + 1;
-
-        return Box.create(
-                Range.closed(topLeftRow, topLeftRow + boxesPerBand),
-                Range.closed(topLeftColumn, topLeftColumn * boxesPerStack));
     }
 
     private static boolean validateInitialState(Set<Candidate> givens, Set<Character> domain, int size) {

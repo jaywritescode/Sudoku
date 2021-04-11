@@ -13,10 +13,10 @@ public class SudokuWriter {
 
     public String row(Sudoku sudoku, int row) {
         StringBuilder sb = new StringBuilder();
-        IntStream.rangeClosed(1, sudoku.getSize())
-                .forEachOrdered(column -> sb.append(sudoku.getGiven(row, column)
-                        .map(candidate -> digit(candidate.getDigit()))
-                        .orElse(StringUtils.SPACE)));
+//        IntStream.rangeClosed(1, sudoku.getSize())
+//                .forEachOrdered(column -> sb.append(sudoku.getGiven(row, column)
+//                        .map(candidate -> digit(candidate.getDigit()))
+//                        .orElse(StringUtils.SPACE)));
         return sb.append(StringUtils.LF).toString();
     }
 
