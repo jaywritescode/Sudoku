@@ -1,22 +1,20 @@
 package sudoku;
 
-import com.google.common.collect.Range;
+import java.util.Set;
 
 public class Box {
 
-    public final Range<Integer> rows;
-    public final Range<Integer> columns;
+    private final Set<RowAndColumn> rowAndColumnSet;
 
-    private Box(Range<Integer> rows, Range<Integer> columns) {
-        this.rows = rows;
-        this.columns = columns;
+    private Box(Set<RowAndColumn> rowAndColumnSet) {
+        this.rowAndColumnSet = rowAndColumnSet;
     }
 
     public boolean containsCell(final int row, final int column) {
-        return rows.contains(row) && columns.contains(column);
+        return rowAndColumnSet.stream().anyMatch(n -> n.row == row && n.column == column);
     }
 
-    public static Box create(Range<Integer> rows, Range<Integer> columns) {
-        return new Box(rows, columns);
+    public static Box create(Set<RowAndColumn> rowAndColumnSet) {
+        return new Box(rowAndColumnSet);
     }
 }

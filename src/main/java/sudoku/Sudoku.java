@@ -1,96 +1,151 @@
 package sudoku;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.Range;
 import csp.ExactCoverProblem;
+import org.apache.commons.collections4.set.CompositeSet;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 public class Sudoku {
 
     private final Set<Candidate> givens;
     private final Set<Character> domain;
 
-    private final Set<Candidate> solution = null;
-
     private final int size;
-    private final int boxesPerBand;
-    private final int boxesPerStack;
+    private final int boxHeight;
+    private final int boxWidth;
 
-    private final CandidateSupplier candidateSupplier;
-
-    private Sudoku(Set<Candidate> givens, Set<Character> domain, int size, int boxesPerBand, int boxesPerStack) {
+    private final Map<RowAndColumn, Box> boxes;
+    Sudoku(Set<Candidate> givens, Set<Character> domain, int size, int boxHeight, int boxWidth) {
         this.givens = Set.copyOf(givens);
         this.domain = Set.copyOf(domain);
         this.size = size;
-        this.boxesPerBand = boxesPerBand;
-        this.boxesPerStack = boxesPerStack;
-        this.candidateSupplier = new CandidateSupplier(this);
+        this.boxHeight = boxHeight;
+        this.boxWidth = boxWidth;
+
+        boxes = new HashMap<>();
+        for (int i = 1; i < this.size; i += boxWidth) {
+            for (int j = 1; j < this.size; j += boxHeight) {
+                Set<RowAndColumn> rowAndColumnSet = new HashSet<>();
+                for (int di = 0; di < boxWidth; ++di) {
+                    for (int dj = 0; dj < boxHeight; ++dj) {
+                        rowAndColumnSet.add(RowAndColumn.create(i + di, j + dj));
+                    }
+                }
+                boxes.put(RowAndColumn.create(i, j), Box.create(rowAndColumnSet));
+            }
+        }
     }
+
+    private Supplier<Set<Candidate>> solutionSupplier = Suppliers.memoize(
+            () -> new ExactCoverProblem<>(candidates(), constraints()) {
+                @Override
+                public boolean relation(Constraint constraint, Candidate candidate) {
+                    return constraint.isSatisfiedBy(candidate);
+                }
+            }.solve());
 
     public Set<Candidate> solve() {
-        return new ExactCoverProblem<>(candidates(), constraints()) {
-            @Override
-            public boolean relation(Constraint constraint, Candidate candidate) {
-                return constraint.isSatisfiedBy(candidate);
-            }
-        }.solve();
-    }
-
-    public Set<Candidate> getGivens() {
-        return givens;
-    }
-
-    public Set<Character> getDomain() {
-        return domain;
+        return solutionSupplier.get();
     }
 
     public int getSize() {
         return size;
     }
 
-    public int getBoxesPerBand() {
-        return boxesPerBand;
-    }
-
-    public int getBoxesPerStack() {
-        return boxesPerStack;
-    }
-
-    public int getRowsPerBox() {
-        return boxesPerStack;
-    }
-
-    public int getColumnsPerBox() {
-        return boxesPerBand;
-    }
-
     private Set<Candidate> candidates() {
-        Set<Candidate> candidates = new HashSet<>();
-        for (var row = 1; row <= size; ++row) {
-            for (var column = 1; column <= size; ++column) {
-                candidates.addAll(candidateSupplier.perform(row, column));
-            }
-        }
-        return candidates;
+        return rowAndColumnStream()
+                .flatMap(this::candidatesForRowAndColumn)
+                .collect(Collectors.toSet());
     }
 
     private Set<Constraint> constraints() {
-        Set<Constraint> constraints = new HashSet<>();
-        for (int row = 1; row <= size; ++row) {
-            for (int column = 1; column <= size; ++column) {
-                for (char digit : domain) {
-                    constraints.add(RowColumnConstraint.from(row, column));
-                    constraints.add(RowDigitConstraint.from(row, digit));
-                    constraints.add(ColumnDigitConstraint.from(column, digit));
-                    // constraints.add(BoxDigitConstraint.from(mapToBox(row, column), digit));
-                }
-            }
+        Set<Constraint> rowColumnConstraints = IntStream.rangeClosed(1, size)
+                .boxed()
+                .flatMap(row -> IntStream.rangeClosed(1, size)
+                        .mapToObj(column -> RowColumnConstraint.from(row, column)))
+                .collect(Collectors.toSet());
+
+        Set<Constraint> rowAndColumnDigitConstraints = domain.stream()
+                .flatMap(digit -> IntStream.rangeClosed(1, size)
+                        .boxed()
+                        .flatMap(i -> Stream.of(
+                                RowDigitConstraint.from(i, digit),
+                                ColumnDigitConstraint.from(i, digit))))
+                .collect(Collectors.toSet());
+
+        Set<Constraint> boxDigitConstraints = boxes.values().stream()
+                .flatMap(box -> domain.stream().map(digit -> BoxDigitConstraint.from(box, digit)))
+                .collect(Collectors.toSet());
+
+        return new CompositeSet<>(rowColumnConstraints, rowAndColumnDigitConstraints, boxDigitConstraints);
+    }
+
+    private Stream<RowAndColumn> rowAndColumnStream() {
+        Predicate<RowAndColumn> end = n -> n.row > size;
+        UnaryOperator<RowAndColumn> next = n -> n.column == size ?
+                RowAndColumn.create(n.row + 1, 1) :
+                RowAndColumn.create(n.row, n.column + 1);
+
+        return Stream.iterate(RowAndColumn.create(1, 1), Predicate.not(end), next);
+    }
+
+    private Stream<Candidate> candidatesForRowAndColumn(RowAndColumn rowAndColumn) {
+        return candidatesForRowAndColumn(rowAndColumn.row, rowAndColumn.column);
+    }
+
+    private Stream<Candidate> candidatesForRowAndColumn(int row, int column) {
+        Optional<Candidate> match = givens.stream()
+                .filter(candidate -> candidate.row == row && candidate.column == column)
+                .findFirst();
+        if (match.isPresent()) {
+            return Stream.of(match.get());
         }
-        return constraints;
+
+        Set<Character> usedDigits = Stream.of(digitsInRow(row), digitsInColumn(column), digitsInBox(row, column))
+                .flatMap(Function.identity())
+                .collect(Collectors.toSet());
+        return domain.stream()
+                .filter(Predicate.not(usedDigits::contains))
+                .map(digit -> new Candidate(row, column, digit));
+    }
+
+    private Stream<Character> digitsInRow(int row) {
+        return givens.stream()
+                .filter(candidate -> candidate.row == row)
+                .map(Candidate::getDigit);
+    }
+
+    private Stream<Character> digitsInColumn(int column) {
+        return givens.stream()
+                .filter(candidate -> candidate.column == column)
+                .map(Candidate::getDigit);
+    }
+
+    private Stream<Character> digitsInBox(int row, int column) {
+        int stack = getStack(column);
+        int band = getBand(row);
+
+        return givens.stream()
+                .filter(candidate -> getBand(candidate.row) == band && getStack(candidate.column) == stack)
+                .map(Candidate::getDigit);
+    }
+
+    private int getStack(int column) {
+        return (column - 1) / boxWidth;
+    }
+
+    private int getBand(int row) {
+        return (row - 1) / boxHeight;
     }
 
     private static boolean validateInitialState(Set<Candidate> givens, Set<Character> domain, int size) {
@@ -107,7 +162,7 @@ public class Sudoku {
      * Create a new Sudoku puzzle with sides of a given length and square boxes.
      *
      * @param givens the initial state of the puzzle
-     * @param size the number of rows or the number of columns in the puzzle.
+     * @param size   the number of rows or the number of columns in the puzzle.
      * @return a Sudoku puzzle
      */
     public static Sudoku create(Set<Candidate> givens, int size) {
@@ -129,14 +184,14 @@ public class Sudoku {
     /**
      * Create a new Sudoku puzzle with the given number of boxes per row and per column.
      *
-     * @param givens the initial state of the column
-     * @param domain the numbers or letters that will appear in this puzzle
-     * @param boxesPerBand the number of boxes per band
-     * @param boxesPerStack the number of boxes per column
+     * @param givens    the initial state of the column
+     * @param domain    the numbers or letters that will appear in this puzzle
+     * @param boxHeight the number of boxes per band
+     * @param boxWidth  the number of boxes per column
      * @return a Sudoku puzzle
      */
-    public static Sudoku create(Set<Candidate> givens, Set<Character> domain, int boxesPerBand, int boxesPerStack) {
-        int size = boxesPerBand * boxesPerStack;
+    public static Sudoku create(Set<Candidate> givens, Set<Character> domain, int boxHeight, int boxWidth) {
+        int size = boxHeight * boxWidth;
 
         Preconditions.checkArgument(domain.size() == size,
                 "Expected a domain of %s but got %s.", size, domain.size());
@@ -144,7 +199,7 @@ public class Sudoku {
         Preconditions.checkArgument(validateInitialState(givens, domain, size),
                 "Given argument is outside puzzle bounds.");
 
-        return new Sudoku(givens, domain, size, boxesPerBand, boxesPerStack);
+        return new Sudoku(givens, domain, size, boxHeight, boxWidth);
     }
 
     public static void main(String... args) {
@@ -176,8 +231,10 @@ public class Sudoku {
         );
         Sudoku puzzle = Sudoku.create(givens, 9);
 
-        puzzle.solve();
+        var solution = puzzle.solve();
 
         new SudokuWriter().write(puzzle);
+
+        System.out.println(solution);
     }
 }
