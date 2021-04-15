@@ -19,6 +19,10 @@ public class SudokuReader {
         return Sudoku.create(readCandidates(puzzle, domain, ':'), domain, boxHeight, boxWidth);
     }
 
+    public static Set<Candidate> readCandidates(String puzzle, Set<Character> domain) {
+        return readCandidates(puzzle, domain, ':');
+    }
+
     public static Set<Candidate> readCandidates(String puzzle, Set<Character> domain, char rowSeparator) {
         int size = domain.size();
 

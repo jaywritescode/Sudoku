@@ -30,7 +30,7 @@ class SudokuTest {
                          "675281943:924763185:183945276:" +
                          "251376498:896412537:347859612";
             var solution = SudokuReader.readCandidates(solved,
-                    Set.of('1', '2', '3', '4', '5', '6', '7', '8', '9'), ':');
+                    Set.of('1', '2', '3', '4', '5', '6', '7', '8', '9'));
 
             assertThat(sudoku.solve()).containsExactlyInAnyOrderElementsOf(solution);
         }
