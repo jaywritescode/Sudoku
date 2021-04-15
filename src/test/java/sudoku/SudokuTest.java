@@ -20,50 +20,19 @@ class SudokuTest {
 
         @Test
         @DisplayName("it solves an NxN puzzle with a solution, where N is a perfect square")
-        void testSolve1() throws Exception {
-            Set<Candidate> givens = Set.of(
-                    new Candidate(1, 2, '2'),
-                    new Candidate(2, 4, '4'),
-                    new Candidate(3, 1, '2'),
-                    new Candidate(4, 3, '1')
-            );
-            Sudoku puzzle = Sudoku.create(givens, Set.of('1', '2', '3', '4'), 2, 2);
-
-            Set<Candidate> solution = puzzle.solve();
-            Set<Candidate> expected = Set.of(
-                    new Candidate(1, 1, '4'),
-                    new Candidate(1, 2, '2'),
-                    new Candidate(1, 3, '3'),
-                    new Candidate(1, 4, '1'),
-                    new Candidate(2, 1, '1'),
-                    new Candidate(2, 2, '3'),
-                    new Candidate(2, 3, '2'),
-                    new Candidate(2, 4, '4'),
-                    new Candidate(3, 1, '2'),
-                    new Candidate(3, 2, '1'),
-                    new Candidate(3, 3, '4'),
-                    new Candidate(3, 4, '3'),
-                    new Candidate(4, 1, '3'),
-                    new Candidate(4, 2, '4'),
-                    new Candidate(4, 3, '1'),
-                    new Candidate(4, 4, '2'));
-
-            assertThat(solution).containsExactlyInAnyOrderElementsOf(expected);
-        }
-
-        @Test
         void testSolve() throws Exception {
-            var puzzle = SudokuReader.read(
-                    "x1x6xxxx9:5xxx27xxx:xxxxx43x1:" +
-                    "x75x8xxx3:9xxxx3xxx:1xx94xx7x:" +
-                    "2xxxxxx98:8x6xxxxxx:xxxxxx6xx");
-            var solution = SudokuReader.readCandidates(
-                    "412638759:539127864:768594321:" +
-                    "675281943:924763185:183945276:" +
-                    "251376498:896412537:347859612",
+            var puzzle = "x1x6xxxx9:5xxx27xxx:xxxxx43x1:" +
+                         "x75x8xxx3:9xxxx3xxx:1xx94xx7x:" +
+                         "2xxxxxx98:8x6xxxxxx:xxxxxx6xx";
+            var sudoku = SudokuReader.read(puzzle);
+
+            var solved = "412638759:539127864:768594321:" +
+                         "675281943:924763185:183945276:" +
+                         "251376498:896412537:347859612";
+            var solution = SudokuReader.readCandidates(solved,
                     Set.of('1', '2', '3', '4', '5', '6', '7', '8', '9'), ':');
 
-            assertThat(puzzle.solve()).containsExactlyInAnyOrderElementsOf(solution);
+            assertThat(sudoku.solve()).containsExactlyInAnyOrderElementsOf(solution);
         }
     }
 
