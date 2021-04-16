@@ -24,7 +24,8 @@ public class Sudoku {
     private final int boxHeight;
     private final int boxWidth;
 
-    private final Map<RowAndColumn, Box> boxes;
+    private final Set<Box> boxes;
+
     Sudoku(Set<Candidate> givens, Set<Character> domain, int size, int boxHeight, int boxWidth) {
         this.givens = Set.copyOf(givens);
         this.domain = Set.copyOf(domain);
@@ -32,18 +33,31 @@ public class Sudoku {
         this.boxHeight = boxHeight;
         this.boxWidth = boxWidth;
 
-        boxes = new HashMap<>();
-        for (int i = 1; i < this.size; i += boxWidth) {
-            for (int j = 1; j < this.size; j += boxHeight) {
-                Set<RowAndColumn> rowAndColumnSet = new HashSet<>();
-                for (int di = 0; di < boxWidth; ++di) {
-                    for (int dj = 0; dj < boxHeight; ++dj) {
-                        rowAndColumnSet.add(RowAndColumn.create(i + di, j + dj));
-                    }
-                }
-                boxes.put(RowAndColumn.create(i, j), Box.create(rowAndColumnSet));
-            }
-        }
+        boxes = createBoxes();
+    }
+
+    private Set<Box> createBoxes() {
+        BiFunction<HashMap<RowAndColumn, Set<RowAndColumn>>, RowAndColumn, HashMap<RowAndColumn, Set<RowAndColumn>>> reducer = (acc, val) -> {
+            acc.put(val, new HashSet<>());
+            return acc;
+        };
+        BinaryOperator<HashMap<RowAndColumn, Set<RowAndColumn>>> combiner = (m, n) -> {
+            m.putAll(n);
+            return m;
+        };
+        Map<RowAndColumn, Set<RowAndColumn>> map =
+                rowAndColumnStream(boxWidth, boxHeight)
+                        .reduce(new HashMap<>(), reducer, combiner);
+
+        this.rowAndColumnStream().forEach(rowAndColumn -> {
+            var boxRow = ((int) (rowAndColumn.row - 1) / boxHeight) + 1;
+            var boxCol = ((int) (rowAndColumn.column - 1) / boxWidth) + 1;
+            var box = RowAndColumn.create(boxRow, boxCol);
+            map.get(box).add(rowAndColumn);
+        });
+        return map.values().stream()
+                .map(Box::create)
+                .collect(Collectors.toSet());
     }
 
     private Supplier<Set<Candidate>> solutionSupplier = Suppliers.memoize(
@@ -58,8 +72,16 @@ public class Sudoku {
         return solutionSupplier.get();
     }
 
-    public int getSize() {
-        return size;
+    public Set<Candidate> getGivens() {
+        return Set.copyOf(givens);
+    }
+
+    public int getBoxHeight() {
+        return boxHeight;
+    }
+
+    public int getBoxWidth() {
+        return boxWidth;
     }
 
     private Set<Candidate> candidates() {
@@ -83,7 +105,7 @@ public class Sudoku {
                                 ColumnDigitConstraint.from(i, digit))))
                 .collect(Collectors.toSet());
 
-        Set<Constraint> boxDigitConstraints = boxes.values().stream()
+        Set<Constraint> boxDigitConstraints = boxes.stream()
                 .flatMap(box -> domain.stream().map(digit -> BoxDigitConstraint.from(box, digit)))
                 .collect(Collectors.toSet());
 
@@ -91,12 +113,7 @@ public class Sudoku {
     }
 
     private Stream<RowAndColumn> rowAndColumnStream() {
-        Predicate<RowAndColumn> end = n -> n.row > size;
-        UnaryOperator<RowAndColumn> next = n -> n.column == size ?
-                RowAndColumn.create(n.row + 1, 1) :
-                RowAndColumn.create(n.row, n.column + 1);
-
-        return Stream.iterate(RowAndColumn.create(1, 1), Predicate.not(end), next);
+        return Sudoku.rowAndColumnStream(size, size);
     }
 
     private Stream<Candidate> candidatesForRowAndColumn(RowAndColumn rowAndColumn) {
@@ -146,6 +163,15 @@ public class Sudoku {
 
     private int getBand(int row) {
         return (row - 1) / boxHeight;
+    }
+
+    private static Stream<RowAndColumn> rowAndColumnStream(int rows, int columns) {
+        Predicate<RowAndColumn> endOfStream = n -> n.row > rows;
+        UnaryOperator<RowAndColumn> next = n -> n.column == columns ?
+                RowAndColumn.create(n.row + 1, 1) :
+                RowAndColumn.create(n.row, n.column + 1);
+
+        return Stream.iterate(RowAndColumn.create(1, 1), Predicate.not(endOfStream), next);
     }
 
     private static boolean validateInitialState(Set<Candidate> givens, Set<Character> domain, int size) {

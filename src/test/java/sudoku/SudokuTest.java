@@ -34,6 +34,22 @@ class SudokuTest {
 
             assertThat(sudoku.solve()).containsExactlyInAnyOrderElementsOf(solution);
         }
+
+        @Test
+        @DisplayName("it solves an NxN puzzle with a solution, where N is not a perfect square")
+        void testSolveIrregular() throws Exception {
+            var puzzle = "x5xx7xxx30:1x204xx86x:" +
+                         "xx3x19xx0x:x9x56xx78x:" +
+                         "xxx9x7x5xx:xx4xx029x3:" +
+                         "316xxx9xx7:x2x8046xx1:" +
+                         "x78x2x4xx5:645xx3x2xx";
+            var sudoku = SudokuReader.read(puzzle, Set.of('0', '1', '2', '3', '4', '5', '6', '7', '8', '9'), 5, 2);
+
+            var solution = sudoku.solve();
+            System.out.println(solution);
+
+            fail("done");
+        }
     }
 
     @Nested
@@ -122,7 +138,6 @@ class SudokuTest {
     }
 
     @Test
-    @Disabled
     void testDigitsInBox() throws Exception {
         var givens = Set.of(
                 new Candidate(1, 1, '6'),
