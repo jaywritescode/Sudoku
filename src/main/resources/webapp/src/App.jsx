@@ -25,6 +25,16 @@ function App() {
         onChange={(e) => setBoxWidth(e.target.value)}
       />
 
+      <Sudoku boxHeight={boxHeight} boxWidth={boxWidth} />
+    </>
+  );
+}
+
+const Sudoku = (props) => {
+  const { boxHeight, boxWidth } = props;
+
+  return (
+    <div class="puzzle">
       {_.range(1, boxHeight * boxWidth + 1).map((row) =>
         _.range(1, boxHeight * boxWidth + 1).map((column) => (
           <div id={`a.${row}.${column}`}>
@@ -32,8 +42,8 @@ function App() {
           </div>
         ))
       )}
-    </>
+    </div>
   );
-}
+};
 
 export default App;
