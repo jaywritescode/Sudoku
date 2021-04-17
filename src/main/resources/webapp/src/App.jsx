@@ -25,8 +25,13 @@ function App() {
         onChange={(e) => setBoxWidth(e.target.value)}
       />
 
-      <p>box width is {boxWidth}</p>
-      <p>box height is {boxHeight}</p>
+      {_.range(1, boxHeight * boxWidth + 1).map((row) =>
+        _.range(1, boxHeight * boxWidth + 1).map((column) => (
+          <div id={`a.${row}.${column}`}>
+            [{row}, {column}]
+          </div>
+        ))
+      )}
     </>
   );
 }
