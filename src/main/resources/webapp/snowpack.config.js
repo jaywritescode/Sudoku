@@ -1,12 +1,12 @@
 /** @type {import("snowpack").SnowpackUserConfig } */
 module.exports = {
   mount: {
-    public: '/',
-    src: '/dist',
+    public: "/",
+    src: "/dist",
   },
   alias: {
-    'react': 'preact/compat',
-    'react-dom': 'preact/compat',
+    react: "preact/compat",
+    "react-dom": "preact/compat",
   },
   plugins: [
     /* ... */
