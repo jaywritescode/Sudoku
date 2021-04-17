@@ -40,7 +40,9 @@ const Sudoku = (props) => {
     gridGap: '2px',
 
     '> div': {
+      width: '100%',
       paddingTop: '100%',
+      position: 'relative',
     },
   });
 
@@ -49,7 +51,6 @@ const Sudoku = (props) => {
       {_.range(1, boxHeight * boxWidth + 1).map((row) =>
         _.range(1, boxHeight * boxWidth + 1).map((column) => (
           <div id={`a.${row}.${column}`}>
-            [{row}, {column}]
           </div>
         ))
       )}
