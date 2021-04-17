@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import _ from "lodash";
+import { css } from '@emotion/css';
 
 function App() {
   const [boxHeight, setBoxHeight] = useState(3);
@@ -33,8 +34,18 @@ function App() {
 const Sudoku = (props) => {
   const { boxHeight, boxWidth } = props;
 
+  const styles = css({
+    display: 'grid',
+    gridTemplateColumns: `repeat(${boxHeight * boxWidth}, 1fr)`,
+    gridGap: '2px',
+
+    '> div': {
+      paddingTop: '100%',
+    },
+  });
+
   return (
-    <div class="puzzle">
+    <div class={styles}>
       {_.range(1, boxHeight * boxWidth + 1).map((row) =>
         _.range(1, boxHeight * boxWidth + 1).map((column) => (
           <div id={`a.${row}.${column}`}>
