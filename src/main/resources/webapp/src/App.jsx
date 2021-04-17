@@ -57,14 +57,9 @@ const Sudoku = (props) => {
 
   const styles = css({
     display: "grid",
-    gridTemplateColumns: `repeat(${size}, 1fr)`,
+    gridTemplateColumns: `repeat(${size}, 40px)`,
     gridGap: "2px",
-
-    "> *": {
-      width: "100%",
-      paddingTop: "100%",
-      position: "relative",
-    },
+    position: 'relative',
   });
 
   const updateCell = (row, column, digit) => {
@@ -95,12 +90,30 @@ const Sudoku = (props) => {
 const Cell = (props) => {
   const { updateCell } = props;
 
+  const styles = css({
+    border: '1px solid black',
+    overflow: 'hidden',
+    height: 0,
+    paddingTop: '100%',
+    position: 'relative',
+  });
+
+  const input = css({
+    width: '100%',
+    height: '100%',
+  });
+
   return (
-    <input
-      type="text"
-      maxLength="1"
-      onInput={(e) => updateCell(e.target.value)}
-    />
+    <div class={styles}>
+      <div style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}>
+        <input
+          type="text"
+          class={input}
+          maxLength="1"
+          onInput={(e) => updateCell(e.target.value)}
+        />
+      </div>
+    </div>
   );
 };
 
