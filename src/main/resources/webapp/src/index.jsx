@@ -1,3 +1,5 @@
+import "preact/debug";
+
 import React from "react";
 import ReactDOM from "react-dom";
 
