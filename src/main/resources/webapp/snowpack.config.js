@@ -4,6 +4,10 @@ module.exports = {
     public: '/',
     src: '/dist',
   },
+  alias: {
+    'react': 'preact/compat',
+    'react-dom': 'preact/compat',
+  },
   plugins: [
     /* ... */
   ],
