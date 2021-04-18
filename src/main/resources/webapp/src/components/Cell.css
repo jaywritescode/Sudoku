@@ -1,0 +1,23 @@
+.aspect-ratio-box {
+  height: 0;
+  overflow: hidden;
+  padding-top: 100%;
+  position: relative;
+}
+
+.aspect-ratio-box-inside {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cell {
+  border: 1px solid black;
+}
+
+.cell input {
+  width: 100%;
+  height: 100%;
+}

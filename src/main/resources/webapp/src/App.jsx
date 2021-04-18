@@ -2,6 +2,8 @@ import React, { useState, useReducer } from "react";
 import _ from "lodash";
 import { css } from "@emotion/css";
 
+import Cell from './components/Cell';
+
 function App() {
   const [boxHeight, setBoxHeight] = useState(3);
   const [boxWidth, setBoxWidth] = useState(3);
@@ -87,34 +89,6 @@ const Sudoku = (props) => {
   );
 };
 
-const Cell = (props) => {
-  const { updateCell } = props;
 
-  const styles = css({
-    border: '1px solid black',
-    overflow: 'hidden',
-    height: 0,
-    paddingTop: '100%',
-    position: 'relative',
-  });
-
-  const input = css({
-    width: '100%',
-    height: '100%',
-  });
-
-  return (
-    <div class={styles}>
-      <div style={{position: 'absolute', top: 0, left: 0, width: '100%', height: '100%'}}>
-        <input
-          type="text"
-          class={input}
-          maxLength="1"
-          onInput={(e) => updateCell(e.target.value)}
-        />
-      </div>
-    </div>
-  );
-};
 
 export default App;
