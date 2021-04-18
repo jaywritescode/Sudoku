@@ -7,10 +7,7 @@ import csp.ExactCoverProblem;
 import org.apache.commons.collections4.set.CompositeSet;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
+import java.util.function.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -258,8 +255,6 @@ public class Sudoku {
         Sudoku puzzle = Sudoku.create(givens, 9);
 
         var solution = puzzle.solve();
-
-        new SudokuWriter().write(puzzle);
 
         System.out.println(solution);
     }
