@@ -31,7 +31,7 @@ const Sudoku = (props) => {
   const [state, dispatch] = useReducer(reducer, {});
 
   const gridTemplateColumns = css`
-    grid-template-columns: repeat(${size}, 40px);
+    grid-template-columns: repeat(${size}, var(--cell-width));
   `;
 
   const updateCell = (row, column, digit) => {

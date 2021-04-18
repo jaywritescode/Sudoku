@@ -1,13 +1,13 @@
 .sudoku {
   --region-border: 2px solid black;
-  box-sizing: content-box;
+  --cell-width: 40px;
   border: var(--region-border);
 }
 
 .aspect-ratio-box {
   height: 0;
   overflow: hidden;
-  padding-top: 100%;
+  padding-top: calc(100% - 2px);
   position: relative;
 }
 
