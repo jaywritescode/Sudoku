@@ -1,34 +1,69 @@
+import _ from "lodash";
 import React, { useState } from "react";
 
 import Sudoku from "./components/Sudoku";
 
-function App() {
-  const [boxHeight, setBoxHeight] = useState(3);
-  const [boxWidth, setBoxWidth] = useState(3);
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
 
-  return (
-    <>
-      <label for="height">Box height</label>
-      <input
-        name="height"
-        type="number"
-        min="2"
-        value={boxHeight}
-        onChange={(e) => setBoxHeight(e.target.value)}
-      />
+    this.state = {
+      boxheight: 3,
+      boxwidth: 3,
+      puzzle: {},
+    };
 
-      <label for="width">Box width</label>
-      <input
-        name="width"
-        type="number"
-        min="2"
-        value={boxWidth}
-        onChange={(e) => setBoxWidth(e.target.value)}
-      />
+    _.bindAll(this, "onUpdateField", "onUpdateGrid");
+  }
 
-      <Sudoku boxHeight={boxHeight} boxWidth={boxWidth} />
-    </>
-  );
+  onUpdateField(evt) {
+    const { target } = evt;
+
+    this.setState({
+      [target.name]: [target.value],
+    });
+  }
+
+  onUpdateGrid(row, column, digit = "") {
+    this.setState({
+      puzzle: {
+        ...this.state.puzzle,
+        [row]: {
+          ...this.state.puzzle[row],
+          [column]: digit,
+        },
+      },
+    });
+  }
+
+  renderDimensionBox(dimension) {
+    const name = "box" + dimension;
+    const value = this.state[name];
+
+    return (
+      <>
+        <label for={name}>Box {dimension}</label>
+        <input
+          name={name}
+          value={value}
+          type="number"
+          min="2"
+          onChange={this.onUpdateField}
+        />
+      </>
+    );
+  }
+
+  render() {
+    return (
+      <>
+        {this.renderDimensionBox("height")}
+        {this.renderDimensionBox("width")}
+
+        {/* <button name="reset" onClick={() => this.setState({ puzzle: {} })}>reset</button> */}
+
+        <Sudoku onUpdate={this.onUpdateGrid} {...this.state} />
+      </>
+    );
+  }
 }
-
-export default App;
