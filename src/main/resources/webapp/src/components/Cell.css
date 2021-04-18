@@ -1,3 +1,9 @@
+.sudoku {
+  --region-border: 2px solid black;
+  box-sizing: content-box;
+  border: var(--region-border);
+}
+
 .aspect-ratio-box {
   height: 0;
   overflow: hidden;
@@ -15,6 +21,22 @@
 
 .cell {
   border: 1px solid black;
+}
+
+.cell.borderTop {
+  border-top: var(--region-border);
+}
+
+.cell.borderBottom {
+  border-bottom: var(--region-border);
+}
+
+.cell.borderLeft {
+  border-left: var(--region-border);
+}
+
+.cell.borderRight {
+  border-right: var(--region-border);
 }
 
 .cell input {

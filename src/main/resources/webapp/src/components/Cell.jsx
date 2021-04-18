@@ -1,12 +1,13 @@
 import React from "react";
+import { cx } from "@emotion/css";
 
 import "./Cell.css";
 
 const Cell = (props) => {
-  const { updateCell } = props;
+  const { updateCell, classNames } = props;
 
   return (
-    <div class="aspect-ratio-box cell">
+    <div class={cx("aspect-ratio-box", "cell", classNames)}>
       <div class="aspect-ratio-box-inside">
         <input
           type="text"

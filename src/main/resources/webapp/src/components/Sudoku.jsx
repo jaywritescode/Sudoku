@@ -30,9 +30,9 @@ const Sudoku = (props) => {
   };
   const [state, dispatch] = useReducer(reducer, {});
 
-  const gridTemplateColumns = css({
-    gridTemplateColumns: `repeat(${size}, 40px)`,
-  });
+  const gridTemplateColumns = css`
+    grid-template-columns: repeat(${size}, 40px);
+  `;
 
   const updateCell = (row, column, digit) => {
     const type = digit.length ? "set" : "unset";
@@ -52,7 +52,15 @@ const Sudoku = (props) => {
     <div class={cx("grid", "sudoku", gridTemplateColumns)}>
       {_.range(1, size + 1).map((row) =>
         _.range(1, size + 1).map((column) => (
-          <Cell updateCell={_.partial(updateCell, row, column)} />
+          <Cell
+            updateCell={_.partial(updateCell, row, column)}
+            classNames={cx({
+              borderTop: row % boxHeight == 1,
+              borderBottom: row % boxHeight == 0,
+              borderLeft: column % boxWidth == 1,
+              borderRight: column % boxWidth == 0,
+            })}
+          />
         ))
       )}
     </div>
