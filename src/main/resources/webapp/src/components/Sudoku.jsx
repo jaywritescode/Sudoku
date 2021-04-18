@@ -7,7 +7,7 @@ import Cell from "./Cell";
 import "./Sudoku.css";
 
 const Sudoku = (props) => {
-  const { boxheight, boxwidth, onUpdate } = props;
+  const { boxheight, boxwidth, puzzle, onUpdate } = props;
   const size = boxheight * boxwidth;
 
   const gridTemplateColumns = css`
@@ -20,6 +20,7 @@ const Sudoku = (props) => {
         _.range(1, size + 1).map((column) => (
           <Cell
             updateCell={_.partial(onUpdate, row, column)}
+            value={(puzzle[row] && puzzle[row][column]) || ""}
             classNames={cx({
               borderTop: row % boxheight == 1,
               borderBottom: row % boxheight == 0,

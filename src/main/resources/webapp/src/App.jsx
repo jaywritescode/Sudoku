@@ -13,7 +13,7 @@ export default class App extends React.Component {
       puzzle: {},
     };
 
-    _.bindAll(this, "onUpdateField", "onUpdateGrid");
+    _.bindAll(this, "onUpdateField", "onUpdateGrid", "onClear");
   }
 
   onUpdateField(evt) {
@@ -33,6 +33,12 @@ export default class App extends React.Component {
           [column]: digit,
         },
       },
+    });
+  }
+
+  onClear() {
+    this.setState({
+      puzzle: {},
     });
   }
 
@@ -60,7 +66,9 @@ export default class App extends React.Component {
         {this.renderDimensionBox("height")}
         {this.renderDimensionBox("width")}
 
-        {/* <button name="reset" onClick={() => this.setState({ puzzle: {} })}>reset</button> */}
+        <button name="reset" onClick={this.onClear}>
+          reset
+        </button>
 
         <Sudoku onUpdate={this.onUpdateGrid} {...this.state} />
       </>
