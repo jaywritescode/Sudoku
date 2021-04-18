@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import './Cell.css';
+import "./Cell.css";
 
 const Cell = (props) => {
   const { updateCell } = props;

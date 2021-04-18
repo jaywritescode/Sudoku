@@ -1,0 +1,9 @@
+.grid {
+  display: grid;
+  position: relative;
+}
+
+.sudoku {
+  border: 3px solid black;
+  width: fit-content;
+}
