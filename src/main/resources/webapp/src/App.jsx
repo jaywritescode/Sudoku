@@ -39,9 +39,7 @@ export default class App extends React.Component {
   }
 
   onClear() {
-    this.setState({
-      puzzle: {},
-    });
+    this.setState(produce(draft => draft.puzzle.clear()));
   }
 
   renderDimensionBox(dimension) {
