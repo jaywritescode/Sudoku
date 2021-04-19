@@ -20,7 +20,7 @@ const Sudoku = (props) => {
         _.range(1, size + 1).map((column) => (
           <Cell
             updateCell={_.partial(onUpdate, row, column)}
-            value={(puzzle[row] && puzzle[row][column]) || ""}
+            value={puzzle.get(`${row}-${column}`)?.digit}
             classNames={cx({
               borderTop: row % boxheight == 1,
               borderBottom: row % boxheight == 0,

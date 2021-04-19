@@ -1,5 +1,8 @@
 import _ from "lodash";
 import React, { useState } from "react";
+import produce, { enableMapSet } from "immer";
+
+enableMapSet();
 
 import Sudoku from "./components/Sudoku";
 
@@ -10,7 +13,7 @@ export default class App extends React.Component {
     this.state = {
       boxheight: 3,
       boxwidth: 3,
-      puzzle: {},
+      puzzle: new Map(),
     };
 
     _.bindAll(this, "onUpdateField", "onUpdateGrid", "onClear");
@@ -25,15 +28,14 @@ export default class App extends React.Component {
   }
 
   onUpdateGrid(row, column, digit = "") {
-    this.setState({
-      puzzle: {
-        ...this.state.puzzle,
-        [row]: {
-          ...this.state.puzzle[row],
-          [column]: digit,
-        },
-      },
-    });
+    this.setState(produce(draft => {
+      if (digit.length) {
+        draft.puzzle.set(`${row}-${column}`, { row, column, digit, isGiven: true });
+      }
+      else {
+        draft.puzzle.delete(`${row}-${column}`);
+      }
+    }));
   }
 
   onClear() {
