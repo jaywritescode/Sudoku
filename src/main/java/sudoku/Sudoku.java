@@ -1,11 +1,13 @@
 package sudoku;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Range;
 import csp.ExactCoverProblem;
 import org.apache.commons.collections4.set.CompositeSet;
 
+import java.beans.ConstructorProperties;
 import java.util.*;
 import java.util.function.*;
 import java.util.stream.Collectors;
@@ -23,13 +25,14 @@ public class Sudoku {
 
     private final Set<Box> boxes;
 
-    Sudoku(Set<Candidate> givens, Set<Character> domain, int size, int boxHeight, int boxWidth) {
+    @ConstructorProperties({"givens", "domain", "boxHeight", "boxWidth"})
+    Sudoku(Set<Candidate> givens, Set<Character> domain, int boxHeight, int boxWidth) {
         this.givens = Set.copyOf(givens);
         this.domain = Set.copyOf(domain);
-        this.size = size;
         this.boxHeight = boxHeight;
         this.boxWidth = boxWidth;
 
+        this.size = boxHeight * boxWidth;
         boxes = createBoxes();
     }
 
@@ -201,7 +204,7 @@ public class Sudoku {
         Preconditions.checkArgument(validateInitialState(givens, domain, size),
                 "Given argument is outside puzzle bounds.");
 
-        return new Sudoku(givens, domain, size, (int) boxSize, (int) boxSize);
+        return new Sudoku(givens, domain, (int) boxSize, (int) boxSize);
     }
 
     /**
@@ -222,7 +225,7 @@ public class Sudoku {
         Preconditions.checkArgument(validateInitialState(givens, domain, size),
                 "Given argument is outside puzzle bounds.");
 
-        return new Sudoku(givens, domain, size, boxHeight, boxWidth);
+        return new Sudoku(givens, domain, boxHeight, boxWidth);
     }
 
     public static void main(String... args) {

@@ -1,11 +1,13 @@
 package sudoku;
 
+import java.beans.ConstructorProperties;
 import java.util.Objects;
 
 public class Candidate {
     public final int row, column;
     public final char digit;
 
+    @ConstructorProperties({"row", "column", "digit"})
     public Candidate(int row, int column, char digit) {
         this.row = row;
         this.column = column;

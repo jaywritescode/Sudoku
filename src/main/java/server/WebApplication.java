@@ -1,23 +1,16 @@
 package server;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import io.javalin.Javalin;
 import io.javalin.plugin.json.JavalinJackson;
+import sudoku.Candidate;
+import sudoku.Sudoku;
 
-import java.util.stream.Collectors;
+import java.util.Set;
 
 public class WebApplication {
 
-    private static JsonNode perform(JsonNode puzzle) {
-        var boxHeight = puzzle.get("boxheight").asInt();
-        var boxWidth = puzzle.get("boxwidth").asInt();
-        var domain = puzzle.findValuesAsText("domain")
-                .stream()
-                .map(s -> s.charAt(0))
-                .collect(Collectors.toSet());
-        var candidates = puzzle.findValues("puzzle");
-
-        return null;
+    private static Set<Candidate> solve(Sudoku sudoku) {
+        return sudoku.solve();
     }
 
     public static void main(String... args) {
@@ -26,11 +19,10 @@ public class WebApplication {
             config.addStaticFiles("/webapp/public");
         }).start(7000);
 
-        app.get("/solve", ctx -> ctx.result("hello world"));
-
         app.post("/solve", ctx -> {
-            var puzzle = JavalinJackson.defaultObjectMapper().readTree(ctx.body());
-            perform(puzzle);
+            Sudoku puzzle = JavalinJackson.defaultObjectMapper().readValue(ctx.body(), Sudoku.class);
+
+            Set<Candidate> solution = solve(puzzle);
             System.err.println(puzzle);
             ctx.status(204);
         });

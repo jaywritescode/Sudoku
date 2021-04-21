@@ -62,6 +62,7 @@ export default class App extends React.Component {
       body: JSON.stringify({
         boxHeight: boxheight,
         boxWidth: boxwidth,
+        domain: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
         givens,
       }),
     });
