@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jaywritesco.de/schemas/sudoku.schema.json",
+  "description": "A representation of a sudoku puzzle.",
+
+  "definitions": {
+    "candidate": {
+      "type": "object",
+      "properties": {
+        "row": { "type":  "number" },
+        "column": { "type": "number" },
+        "digit": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1
+        }
+      },
+      "required": ["row", "column", "digit"]
+    }
+  },
+
+  "type": "object",
+  "properties": {
+    "boxWidth": {
+      "type": "number",
+      "description": "The width of a box, in cells."
+    },
+    "boxHeight": {
+      "type": "number",
+      "description": "The height of a box, in cells."
+    },
+    "domain": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      "uniqueItems": true
+    },
+    "givens": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/candidate" },
+      "minLength": 1
+    }
+  },
+  "required": ["boxWidth", "boxHeight", "domain", "givens"]
+}

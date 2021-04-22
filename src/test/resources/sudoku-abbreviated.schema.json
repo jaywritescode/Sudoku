@@ -1,0 +1,40 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "$id": "http://jaywritesco.de/schemas/sudoku-abbreviated.schema.json",
+  "description": "A more abbreviated representation of a sudoku puzzle.",
+
+  "type": "object",
+  "properties": {
+    "boxWidth": {
+      "type": "number",
+      "description": "The width of a box, in cells."
+    },
+    "boxHeight": {
+      "type": "number",
+      "description": "The height of a box, in cells."
+    },
+    "domain": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1
+      },
+      "uniqueItems": true
+    },
+    "givens": {
+      "type": "array",
+      "items": [
+        { "type": "number" },
+        { "type": "number" },
+        {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1
+        }
+      ],
+      "minLength": 1,
+      "uniqueItems": true
+    }
+  }
+}
