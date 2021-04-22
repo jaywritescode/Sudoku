@@ -1,5 +1,8 @@
 package server;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import io.javalin.Javalin;
 import io.javalin.plugin.json.JavalinJackson;
 import sudoku.Candidate;
@@ -22,9 +25,15 @@ public class WebApplication {
         app.post("/solve", ctx -> {
             Sudoku puzzle = JavalinJackson.defaultObjectMapper().readValue(ctx.body(), Sudoku.class);
 
-            Set<Candidate> solution = solve(puzzle);
-            System.err.println(puzzle);
-            ctx.status(204);
+            Set<Candidate> solution = puzzle.solve();
+
+            ObjectWriter jsonWriter = new ObjectMapper()
+                    .enable(SerializationFeature.WRAP_ROOT_VALUE)
+                    .writer()
+                    .withRootName("solution");
+
+            ctx.result(jsonWriter.writeValueAsString(solution)).contentType("application/json");
+            ctx.status(200);
         });
     }
 }

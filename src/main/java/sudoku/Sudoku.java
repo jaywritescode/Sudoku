@@ -1,6 +1,5 @@
 package sudoku;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Suppliers;
 import com.google.common.collect.Range;

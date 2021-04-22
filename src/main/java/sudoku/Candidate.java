@@ -1,5 +1,7 @@
 package sudoku;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.beans.ConstructorProperties;
 import java.util.Objects;
 
@@ -26,6 +28,7 @@ public class Candidate {
         return digit;
     }
 
+    @JsonIgnore
     public RowAndColumn getRowAndColumn() {
         return RowAndColumn.create(row, column);
     }
