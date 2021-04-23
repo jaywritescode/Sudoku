@@ -1,6 +1,7 @@
 import _ from "lodash";
 import React, { useState } from "react";
 import produce, { enableMapSet } from "immer";
+import { parse } from "query-string";
 
 enableMapSet();
 
@@ -10,13 +11,34 @@ export default class App extends React.Component {
   constructor(props) {
     super(props);
 
+    const { boxHeight, boxWidth, puzzle } = parse(location.search);
+
     this.state = {
-      boxheight: 3,
-      boxwidth: 3,
-      puzzle: new Map(),
+      boxheight: boxHeight || 3,
+      boxwidth: boxWidth || 3,
+      puzzle: App.readPuzzle(boxHeight * boxWidth, puzzle) || new Map(),
     };
 
     _.bindAll(this, "onUpdateField", "onUpdateGrid", "onClear", "onSubmit");
+  }
+
+  static readPuzzle(size, puzzle) {
+    if (!puzzle) {
+      return null;
+    }
+
+    let row = 1;
+    let column = 1;
+    const map = new Map();
+
+    puzzle.split('').forEach(char => {
+      if (char != '-') {
+        map.set(`${row}-${column}`, { row, column, digit: char, isGiven: true })
+      }
+      column = column == size ? 1 : column + 1;
+      row = column == 1 ? row + 1 : row;
+    });
+    return map;
   }
 
   onUpdateField(evt) {
