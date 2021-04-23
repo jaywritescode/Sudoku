@@ -1,5 +1,5 @@
 import _ from "lodash";
-import React, { useState } from "react";
+import React from "react";
 import produce, { enableMapSet } from "immer";
 import { parse } from "query-string";
 
@@ -88,6 +88,7 @@ export default class App extends React.Component {
         givens,
       }),
     });
+    console.log(response);  
   }
 
   renderDimensionBox(dimension) {
