@@ -76,7 +76,7 @@ export default class App extends React.Component {
       Object.assign({ row, column, digit })
     );
 
-    let response = await window.fetch("http://localhost:7000/solve", {
+    const response = await window.fetch("/solve", {
       method: "post",
       headers: {
         "Content-Type": "application/json;charset=utf-8",
@@ -88,7 +88,9 @@ export default class App extends React.Component {
         givens,
       }),
     });
-    console.log(response);  
+    const json = await response.json();
+
+    console.log(json);
   }
 
   renderDimensionBox(dimension) {
