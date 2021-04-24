@@ -31,9 +31,14 @@ export default class App extends React.Component {
     let column = 1;
     const map = new Map();
 
-    puzzle.split('').forEach(char => {
-      if (char != '-') {
-        map.set(`${row}-${column}`, { row, column, digit: char, isGiven: true })
+    puzzle.split("").forEach((char) => {
+      if (char != "-") {
+        map.set(`${row}-${column}`, {
+          row,
+          column,
+          digit: char,
+          isGiven: true,
+        });
       }
       column = column == size ? 1 : column + 1;
       row = column == 1 ? row + 1 : row;
@@ -84,7 +89,7 @@ export default class App extends React.Component {
       body: JSON.stringify({
         boxHeight: boxheight,
         boxWidth: boxwidth,
-        domain: ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+        domain: ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
         givens,
       }),
     });
