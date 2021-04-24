@@ -4,10 +4,6 @@ module.exports = {
     public: "/",
     src: "/dist",
   },
-  alias: {
-    react: "preact/compat",
-    "react-dom": "preact/compat",
-  },
   plugins: [
     /* ... */
   ],
@@ -18,9 +14,6 @@ module.exports = {
   optimize: {
     /* Example: Bundle your final build: */
     // "bundle": true,
-  },
-  packageOptions: {
-    /* ... */
   },
   devOptions: {
     /* ... */
