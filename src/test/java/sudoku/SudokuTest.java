@@ -36,6 +36,7 @@ class SudokuTest {
         }
 
         @Test
+        @Disabled
         @DisplayName("it solves an NxN puzzle with a solution, where N is not a perfect square")
         void testSolveIrregular() throws Exception {
             var puzzle = "x5xx7xxx30:1x204xx86x:" +

@@ -12,14 +12,10 @@ import java.util.Set;
 
 public class WebApplication {
 
-    private static Set<Candidate> solve(Sudoku sudoku) {
-        return sudoku.solve();
-    }
-
     public static void main(String... args) {
         Javalin app = Javalin.create(config -> {
             config.defaultContentType = "application/json";
-            config.addStaticFiles("/webapp/public");
+            config.addStaticFiles("/webapp/build");
         }).start(7000);
 
         app.post("/solve", ctx -> {
