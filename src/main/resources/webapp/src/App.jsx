@@ -71,6 +71,19 @@ export default class App extends React.Component {
     );
   }
 
+  onSolve({ solution }) {
+    this.setState(produce((draft) => {
+      solution.forEach(({ row, column, digit}) => {
+        const key = `${row}-${column}`;
+        if (draft.puzzle.has(key)) {
+          return;
+        }
+
+        draft.puzzle.set(key, { row, column, digit });
+      });
+    }));
+  }
+
   onClear() {
     this.setState(produce((draft) => draft.puzzle.clear()));
   }
@@ -95,7 +108,7 @@ export default class App extends React.Component {
     });
     const json = await response.json();
 
-    console.log(json);
+    this.onSolve(json);
   }
 
   renderDimensionBox(dimension) {
