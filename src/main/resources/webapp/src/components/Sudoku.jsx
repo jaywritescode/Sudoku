@@ -15,10 +15,11 @@ const Sudoku = (props) => {
   `;
 
   return (
-    <div class={cx("grid", "sudoku", gridTemplateColumns)}>
+    <div className={cx("grid", "sudoku", gridTemplateColumns)}>
       {_.range(1, size + 1).map((row) =>
         _.range(1, size + 1).map((column) => (
           <Cell
+            key={`${row}-${column}`}
             updateCell={_.partial(onUpdate, row, column)}
             value={puzzle.get(`${row}-${column}`)?.digit}
             classNames={cx({

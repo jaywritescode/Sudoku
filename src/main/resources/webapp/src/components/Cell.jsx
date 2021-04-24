@@ -7,8 +7,8 @@ const Cell = (props) => {
   const { updateCell, value, classNames } = props;
 
   return (
-    <div class={cx("aspect-ratio-box", "cell", classNames)}>
-      <div class="aspect-ratio-box-inside">
+    <div className={cx("aspect-ratio-box", "cell", classNames)}>
+      <div className="aspect-ratio-box-inside">
         <input
           type="text"
           value={value}

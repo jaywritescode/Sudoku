@@ -104,7 +104,7 @@ export default class App extends React.Component {
 
     return (
       <>
-        <label for={name}>Box {dimension}</label>
+        <label htmlFor={name}>Box {dimension}</label>
         <input
           name={name}
           value={value}
