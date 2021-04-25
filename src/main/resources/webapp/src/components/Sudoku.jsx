@@ -7,8 +7,8 @@ import Cell from "./Cell";
 import "./Sudoku.css";
 
 const Sudoku = (props) => {
-  const { boxheight, boxwidth, puzzle, onUpdate } = props;
-  const size = boxheight * boxwidth;
+  const { boxHeight, boxWidth, puzzle, onUpdate } = props;
+  const size = boxHeight * boxWidth;
 
   const gridTemplateColumns = css`
     grid-template-columns: repeat(${size}, var(--cell-width));
@@ -23,10 +23,10 @@ const Sudoku = (props) => {
             updateCell={_.partial(onUpdate, row, column)}
             value={puzzle.get(`${row}-${column}`)?.digit}
             classNames={cx({
-              borderTop: row % boxheight == 1,
-              borderBottom: row % boxheight == 0,
-              borderLeft: column % boxwidth == 1,
-              borderRight: column % boxwidth == 0,
+              borderTop: row % boxHeight == 1,
+              borderBottom: row % boxHeight == 0,
+              borderLeft: column % boxWidth == 1,
+              borderRight: column % boxWidth == 0,
             })}
           />
         ))

@@ -14,12 +14,12 @@ export default class App extends React.Component {
     const { boxHeight, boxWidth, puzzle } = parse(location.search);
 
     this.state = {
-      boxheight: boxHeight || 3,
-      boxwidth: boxWidth || 3,
+      boxHeight: boxHeight || 3,
+      boxWidth: boxWidth || 3,
       puzzle: App.readPuzzle(boxHeight * boxWidth, puzzle) || new Map(),
     };
 
-    _.bindAll(this, "onUpdateField", "onUpdateGrid", "onClear", "onSubmit");
+    _.bindAll(this, "onUpdateGrid", "onClear", "onSubmit");
   }
 
   static readPuzzle(size, puzzle) {
@@ -44,14 +44,6 @@ export default class App extends React.Component {
       row = column == 1 ? row + 1 : row;
     });
     return map;
-  }
-
-  onUpdateField(evt) {
-    const { target } = evt;
-
-    this.setState({
-      [target.name]: [target.value],
-    });
   }
 
   onUpdateGrid(row, column, digit = "") {
@@ -100,8 +92,8 @@ export default class App extends React.Component {
         "Content-Type": "application/json;charset=utf-8",
       },
       body: JSON.stringify({
-        boxHeight: boxheight,
-        boxWidth: boxwidth,
+        boxHeight,
+        boxWidth,
         domain: ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
         givens,
       }),
@@ -111,29 +103,29 @@ export default class App extends React.Component {
     this.onSolve(json);
   }
 
-  renderDimensionBox(dimension) {
-    const name = "box" + dimension;
-    const value = this.state[name];
+  render() {
+    const { boxHeight, boxWidth } = this.state;
 
     return (
       <>
-        <label htmlFor={name}>Box {dimension}</label>
+        <label htmlFor="height">Box height</label>
         <input
-          name={name}
-          value={value}
+          id="height"
+          value={boxHeight}
           type="number"
           min="2"
-          onChange={this.onUpdateField}
+          className="size-input"
+          onChange={(e) => this.setState({ boxHeight: e.target.value })}
         />
-      </>
-    );
-  }
-
-  render() {
-    return (
-      <>
-        {this.renderDimensionBox("height")}
-        {this.renderDimensionBox("width")}
+        <label htmlFor="width">Box width</label>
+        <input
+          id="width"
+          value={boxWidth}
+          type="number"
+          min="2"
+          className="size-input"
+          onChange={(e) => this.setState({ boxWidth: e.target.value })}
+        />
 
         <button name="reset" onClick={this.onClear}>
           reset
