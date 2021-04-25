@@ -12,6 +12,25 @@ body {
   margin: 0 auto;
 }
 
+#root {
+  display: grid;
+  grid-template-columns: min-content auto min-content;
+  grid-template-rows: min-content auto min-content;
+}
+
+button[name="reset"] {
+  grid-column: 3;
+}
+
+button[name="solve"] {
+  grid-row: 3;
+}
+
+main {
+  grid-column: 2 / span 2;
+  grid-row: 2 / span 2;
+}
+
 .size-input {
   width: 4rem;
 }

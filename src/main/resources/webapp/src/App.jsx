@@ -2,6 +2,7 @@ import _ from "lodash";
 import React from "react";
 import produce, { enableMapSet } from "immer";
 import { parse } from "query-string";
+import { CgArrowsHAlt, CgArrowsVAlt } from "react-icons/cg";
 
 enableMapSet();
 
@@ -108,24 +109,31 @@ export default class App extends React.Component {
 
     return (
       <>
-        <label htmlFor="height">Box height</label>
-        <input
-          id="height"
-          value={boxHeight}
-          type="number"
-          min="2"
-          className="size-input"
-          onChange={(e) => this.setState({ boxHeight: e.target.value })}
-        />
-        <label htmlFor="width">Box width</label>
-        <input
-          id="width"
-          value={boxWidth}
-          type="number"
-          min="2"
-          className="size-input"
-          onChange={(e) => this.setState({ boxWidth: e.target.value })}
-        />
+
+        <div style={{gridColumnStart: 1, gridRowStart: 1}}>size</div>
+
+        <div style={{gridColumnStart: 2, gridRowStart: 1}}>
+          <label htmlFor="width"><CgArrowsHAlt /></label>
+          <input
+            id="width"
+            value={boxWidth}
+            type="number"
+            min="2"
+            className="size-input"
+            onChange={(e) => this.setState({ boxWidth: e.target.value })}
+          />
+        </div>
+        <div style={{gridColumnStart: 1, gridRowStart: 2}}>
+          <label htmlFor="height"><CgArrowsVAlt /></label>
+          <input
+            id="height"
+            value={boxHeight}
+            type="number"
+            min="2"
+            className="size-input"
+            onChange={(e) => this.setState({ boxHeight: e.target.value })}
+          />
+        </div>
 
         <button name="reset" onClick={this.onClear}>
           reset
@@ -134,6 +142,8 @@ export default class App extends React.Component {
         <button name="solve" onClick={this.onSubmit}>
           solve
         </button>
+
+        {/* <div style={{gridColumnStart: 3, gridRowStart: 1}}>fill in the sudoku puzzle below</div> */}
 
         <Sudoku onUpdate={this.onUpdateGrid} {...this.state} />
       </>

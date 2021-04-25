@@ -15,7 +15,7 @@ const Sudoku = (props) => {
   `;
 
   return (
-    <div className={cx("grid", "sudoku", gridTemplateColumns)}>
+    <main role="main" className={cx("grid", "sudoku", gridTemplateColumns)}>
       {_.range(1, size + 1).map((row) =>
         _.range(1, size + 1).map((column) => (
           <Cell
@@ -31,7 +31,7 @@ const Sudoku = (props) => {
           />
         ))
       )}
-    </div>
+    </main>
   );
 };
 
