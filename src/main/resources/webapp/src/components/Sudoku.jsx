@@ -27,6 +27,7 @@ const Sudoku = (props) => {
               borderBottom: row % boxHeight == 0,
               borderLeft: column % boxWidth == 1,
               borderRight: column % boxWidth == 0,
+              isGiven: puzzle[`${row}-${column}`]?.isGiven,
             })}
           />
         ))

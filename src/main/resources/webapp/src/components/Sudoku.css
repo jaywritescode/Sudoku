@@ -6,3 +6,8 @@
 .sudoku {
   width: min-content;
 }
+
+.isGiven input {
+  background-color: #e5e5e5;
+  font-weight: 700;
+}
