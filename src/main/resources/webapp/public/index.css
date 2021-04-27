@@ -38,7 +38,7 @@ body {
   grid-column: 1;
 }
 
-button[name="reset"] {
+button[name="clear"] {
   grid-column: 3;
   place-self: end;
 }

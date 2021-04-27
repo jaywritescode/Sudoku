@@ -163,8 +163,8 @@ export default class App extends React.Component {
           />
         </div>
 
-        <button name="reset" onClick={this.onClear}>
-          reset
+        <button name="clear" onClick={this.onClear}>
+          clear
         </button>
 
         <button name="solve" onClick={this.onSubmit}>
