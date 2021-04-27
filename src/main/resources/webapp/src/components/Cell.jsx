@@ -11,7 +11,7 @@ const Cell = (props) => {
       <div className="aspect-ratio-box-inside">
         <input
           type="text"
-          value={value}
+          value={value || ""}
           maxLength="1"
           onInput={(e) => updateCell(e.target.value)}
         />
