@@ -47,21 +47,9 @@ export default class App extends React.Component {
     return map;
   }
 
-  static getDomain(size, puzzle) {
-    const domain = Array.from(puzzle.values()).reduce((acc, { digit }) => {
-      acc.add(digit);
-      return acc;
-    }, new Set());
-
-    if (v.size > size) {
-      // error
-      return;
-    }
-
-    for (let i = 49; v.size < size; ++i) {
-      domain.add(String.fromCharCode(i));
-    }
-    return Array.from(domain);
+  getSize() {
+    const { boxWidth, boxHeight } = this.state;
+    return boxWidth * boxHeight;
   }
 
   onUpdateGrid(row, column, digit = "") {
@@ -114,13 +102,32 @@ export default class App extends React.Component {
       body: JSON.stringify({
         boxHeight,
         boxWidth,
-        domain: App.getDomain(boxHeight * boxWidth, puzzle),
+        domain: this.getDomain(),
         givens,
       }),
     });
     const json = await response.json();
 
     this.onSolve(json);
+  }
+
+  getDomain() {
+    const { puzzle } = this.state;
+    const puzzleSize = this.getSize();
+
+    const domain = Array.from(puzzle.values()).reduce((acc, { digit }) => {
+      acc.add(digit);
+      return acc;
+    }, new Set());
+
+    if (domain.size > puzzleSize) {
+      throw new Error("Domain is too large for puzzle.");
+    }
+
+    for (let i = 49; domain.size < puzzleSize; ++i) {
+      domain.add(String.fromCharCode(i));
+    }
+    return Array.from(domain);
   }
 
   render() {
