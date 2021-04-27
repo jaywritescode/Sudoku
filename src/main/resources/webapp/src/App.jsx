@@ -1,10 +1,8 @@
 import _ from "lodash";
 import React from "react";
-import produce, { enableMapSet } from "immer";
+import produce from "immer";
 import { parse } from "query-string";
 import { CgArrowsHAlt, CgArrowsVAlt } from "react-icons/cg";
-
-enableMapSet();
 
 import Sudoku from "./components/Sudoku";
 
@@ -17,7 +15,8 @@ export default class App extends React.Component {
     this.state = {
       boxHeight: boxHeight || 3,
       boxWidth: boxWidth || 3,
-      puzzle: App.readPuzzle(boxHeight * boxWidth, puzzle) || new Map(),
+      puzzle:
+        App.readPuzzle(boxHeight * boxWidth, puzzle) || Object.create(null),
     };
 
     _.bindAll(this, "onUpdateGrid", "onClear", "onSubmit");
@@ -30,21 +29,21 @@ export default class App extends React.Component {
 
     let row = 1;
     let column = 1;
-    const map = new Map();
+    const givens = Object.create(null);
 
     puzzle.split("").forEach((char) => {
       if (char != "-") {
-        map.set(`${row}-${column}`, {
+        givens[`${row}-${column}`] = {
           row,
           column,
           digit: char,
           isGiven: true,
-        });
+        };
       }
       column = column == size ? 1 : column + 1;
       row = column == 1 ? row + 1 : row;
     });
-    return map;
+    return givens;
   }
 
   getSize() {
@@ -56,14 +55,14 @@ export default class App extends React.Component {
     this.setState(
       produce((draft) => {
         if (digit.length) {
-          draft.puzzle.set(`${row}-${column}`, {
+          draft.puzzle[`${row}-${column}`] = {
             row,
             column,
             digit,
             isGiven: true,
-          });
+          };
         } else {
-          draft.puzzle.delete(`${row}-${column}`);
+          delete draft.puzzle[`${row}-${column}`];
         }
       })
     );
@@ -74,23 +73,23 @@ export default class App extends React.Component {
       produce((draft) => {
         solution.forEach(({ row, column, digit }) => {
           const key = `${row}-${column}`;
-          if (draft.puzzle.has(key)) {
+          if (draft.puzzle[key]) {
             return;
           }
 
-          draft.puzzle.set(key, { row, column, digit });
+          draft.puzzle[key] = { row, column, digit };
         });
       })
     );
   }
 
   onClear() {
-    this.setState(produce((draft) => draft.puzzle.clear()));
+    this.setState(produce((draft) => (draft.puzzle = Object.create(null))));
   }
 
   async onSubmit() {
     const { boxHeight, boxWidth, puzzle } = this.state;
-    const givens = Array.from(puzzle.values()).map(({ row, column, digit }) =>
+    const givens = Object.values(puzzle).map(({ row, column, digit }) =>
       Object.assign({ row, column, digit })
     );
 
@@ -115,7 +114,7 @@ export default class App extends React.Component {
     const { puzzle } = this.state;
     const puzzleSize = this.getSize();
 
-    const domain = Array.from(puzzle.values()).reduce((acc, { digit }) => {
+    const domain = Object.values(puzzle).reduce((acc, { digit }) => {
       acc.add(digit);
       return acc;
     }, new Set());

@@ -21,7 +21,7 @@ const Sudoku = (props) => {
           <Cell
             key={`${row}-${column}`}
             updateCell={_.partial(onUpdate, row, column)}
-            value={puzzle.get(`${row}-${column}`)?.digit}
+            value={puzzle[`${row}-${column}`]?.digit}
             classNames={cx({
               borderTop: row % boxHeight == 1,
               borderBottom: row % boxHeight == 0,
