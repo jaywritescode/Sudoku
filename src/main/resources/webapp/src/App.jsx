@@ -109,10 +109,8 @@ export default class App extends React.Component {
 
     return (
       <>
-
-        <div style={{gridColumnStart: 1, gridRowStart: 1}}>size</div>
-
-        <div style={{gridColumnStart: 2, gridRowStart: 1}}>
+        <div id="size-label">size</div>
+        <div id="adjust-width">
           <label htmlFor="width"><CgArrowsHAlt /></label>
           <input
             id="width"
@@ -123,7 +121,7 @@ export default class App extends React.Component {
             onChange={(e) => this.setState({ boxWidth: e.target.value })}
           />
         </div>
-        <div style={{gridColumnStart: 1, gridRowStart: 2}}>
+        <div id="adjust-height">
           <label htmlFor="height"><CgArrowsVAlt /></label>
           <input
             id="height"
@@ -142,8 +140,6 @@ export default class App extends React.Component {
         <button name="solve" onClick={this.onSubmit}>
           solve
         </button>
-
-        {/* <div style={{gridColumnStart: 3, gridRowStart: 1}}>fill in the sudoku puzzle below</div> */}
 
         <Sudoku onUpdate={this.onUpdateGrid} {...this.state} />
       </>

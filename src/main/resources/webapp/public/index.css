@@ -16,14 +16,41 @@ body {
   display: grid;
   grid-template-columns: min-content auto min-content;
   grid-template-rows: min-content auto min-content;
+  width: min-content;
+  margin: 0 auto;
+}
+
+#size-label {
+  place-self: end right;
+  grid-row: 1;
+  grid-column: 1;
+  margin-inline-end: 10px;
+  margin-block-end: 10px;
+}
+
+#adjust-width {
+  grid-row: 1;
+  grid-column: 2;
+}
+
+#adjust-height {
+  grid-row: 2;
+  grid-column: 1;
 }
 
 button[name="reset"] {
   grid-column: 3;
+  place-self: end;
 }
 
 button[name="solve"] {
   grid-row: 3;
+  place-self: end;
+}
+
+label[for="width"] {
+  display: block;
+  margin-bottom: 0;
 }
 
 main {
