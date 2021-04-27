@@ -47,6 +47,23 @@ export default class App extends React.Component {
     return map;
   }
 
+  static getDomain(size, puzzle) {
+    const domain = Array.from(puzzle.values()).reduce((acc, { digit }) => {
+      acc.add(digit);
+      return acc;
+    }, new Set());
+
+    if (v.size > size) {
+      // error
+      return;
+    }
+
+    for (let i = 49; v.size < size; ++i) {
+      domain.add(String.fromCharCode(i));
+    }
+    return Array.from(domain);
+  }
+
   onUpdateGrid(row, column, digit = "") {
     this.setState(
       produce((draft) => {
@@ -65,16 +82,18 @@ export default class App extends React.Component {
   }
 
   onSolve({ solution }) {
-    this.setState(produce((draft) => {
-      solution.forEach(({ row, column, digit}) => {
-        const key = `${row}-${column}`;
-        if (draft.puzzle.has(key)) {
-          return;
-        }
+    this.setState(
+      produce((draft) => {
+        solution.forEach(({ row, column, digit }) => {
+          const key = `${row}-${column}`;
+          if (draft.puzzle.has(key)) {
+            return;
+          }
 
-        draft.puzzle.set(key, { row, column, digit });
-      });
-    }));
+          draft.puzzle.set(key, { row, column, digit });
+        });
+      })
+    );
   }
 
   onClear() {
@@ -82,7 +101,7 @@ export default class App extends React.Component {
   }
 
   async onSubmit() {
-    const { boxheight, boxwidth, puzzle } = this.state;
+    const { boxHeight, boxWidth, puzzle } = this.state;
     const givens = Array.from(puzzle.values()).map(({ row, column, digit }) =>
       Object.assign({ row, column, digit })
     );
@@ -95,7 +114,7 @@ export default class App extends React.Component {
       body: JSON.stringify({
         boxHeight,
         boxWidth,
-        domain: ["1", "2", "3", "4", "5", "6", "7", "8", "9"],
+        domain: App.getDomain(boxHeight * boxWidth, puzzle),
         givens,
       }),
     });
@@ -111,7 +130,9 @@ export default class App extends React.Component {
       <>
         <div id="size-label">size</div>
         <div id="adjust-width">
-          <label htmlFor="width"><CgArrowsHAlt /></label>
+          <label htmlFor="width">
+            <CgArrowsHAlt />
+          </label>
           <input
             id="width"
             value={boxWidth}
@@ -122,7 +143,9 @@ export default class App extends React.Component {
           />
         </div>
         <div id="adjust-height">
-          <label htmlFor="height"><CgArrowsVAlt /></label>
+          <label htmlFor="height">
+            <CgArrowsVAlt />
+          </label>
           <input
             id="height"
             value={boxHeight}
