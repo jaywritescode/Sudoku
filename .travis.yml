@@ -1,1 +1,20 @@
 language: java
+
+os: linux
+
+dist: xenial
+
+before_install:
+- nvm install --lts --no-progress
+
+before_script:
+- npm set cwd=./src/main/resources/webapp
+- npm run build
+
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
