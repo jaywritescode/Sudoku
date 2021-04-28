@@ -9,6 +9,7 @@ before_install:
 
 before_script:
 - cd src/main/resources/webapp
+- npm install
 - npm run build
 
 before_cache:
