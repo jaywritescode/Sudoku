@@ -8,8 +8,8 @@ before_install:
 - nvm install --lts --no-progress
 
 before_script:
-- cd src/main/resources/webapp
-- npm install
+- npm set prefix=./src/main/resources/webapp
+- npm ci
 - npm run build
 
 before_cache:
