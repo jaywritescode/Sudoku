@@ -8,7 +8,7 @@ before_install:
 - nvm install --lts --no-progress
 
 before_script:
-- npm set cwd=./src/main/resources/webapp
+- cd src/main/resources/webapp
 - npm run build
 
 before_cache:
