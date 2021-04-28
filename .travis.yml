@@ -9,6 +9,7 @@ before_install:
 
 before_script:
 - npm set prefix=./src/main/resources/webapp
+- npm prefix
 - npm ci
 - npm run build
 
