@@ -49,8 +49,8 @@ public class Sudoku {
                         .reduce(new HashMap<>(), reducer, combiner);
 
         this.rowAndColumnStream().forEach(rowAndColumn -> {
-            var boxRow = ((int) (rowAndColumn.row - 1) / boxHeight) + 1;
-            var boxCol = ((int) (rowAndColumn.column - 1) / boxWidth) + 1;
+            var boxRow = ((rowAndColumn.row - 1) / boxHeight) + 1;
+            var boxCol = ((rowAndColumn.column - 1) / boxWidth) + 1;
             var box = RowAndColumn.create(boxRow, boxCol);
             map.get(box).add(rowAndColumn);
         });
@@ -59,7 +59,7 @@ public class Sudoku {
                 .collect(Collectors.toSet());
     }
 
-    private Supplier<Set<Candidate>> solutionSupplier = Suppliers.memoize(
+    private final Supplier<Set<Candidate>> solutionSupplier = Suppliers.memoize(
             () -> new ExactCoverProblem<>(candidates(), constraints()) {
                 @Override
                 public boolean relation(Constraint constraint, Candidate candidate) {
