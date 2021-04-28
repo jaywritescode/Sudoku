@@ -8,10 +8,8 @@ before_install:
 - nvm install --lts --no-progress
 
 before_script:
-- npm set prefix=./src/main/resources/webapp
-- npm prefix
-- npm ci
-- npm run build
+- npm --prefix=./src/main/resources/webapp ci
+- npm --prefix=./src/main/resources/webapp run build
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
