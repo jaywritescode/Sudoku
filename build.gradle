@@ -1,5 +1,4 @@
 plugins {
-    id 'java'
     id 'application'
 }
 
@@ -13,6 +12,12 @@ repositories {
 
 application {
     mainClass = 'server.WebApplication'
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(11)
+    }
 }
 
 dependencies {
@@ -30,4 +35,10 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': application.mainClass
+    }
 }
