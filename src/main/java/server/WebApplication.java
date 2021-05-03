@@ -12,11 +12,14 @@ import java.util.Set;
 
 public class WebApplication {
 
+    public static final String DEFAULT_PORT = "7000";
+
     public static void main(String... args) {
+        int port = Integer.valueOf(System.getenv().getOrDefault("PORT", DEFAULT_PORT));
         Javalin app = Javalin.create(config -> {
             config.defaultContentType = "application/json";
             config.addStaticFiles("/webapp/build");
-        }).start(7000);
+        }).start(port);
 
         app.post("/solve", ctx -> {
             Sudoku puzzle = JavalinJackson.defaultObjectMapper().readValue(ctx.body(), Sudoku.class);
